@@ -1,4 +1,4 @@
-package com.vietvmq.flutter_config_plus
+package com.vietvmq.flutter_env_config
 
 import android.content.Context
 import android.content.res.Resources
@@ -11,7 +11,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.lang.reflect.Field
 
-class FlutterConfigPlusPlugin(private val context: Context? = null): FlutterPlugin, MethodCallHandler {
+class FlutterEnvConfigPlugin(private val context: Context? = null): FlutterPlugin, MethodCallHandler {
 
   private var applicationContext: Context? = context
 
@@ -19,7 +19,7 @@ class FlutterConfigPlusPlugin(private val context: Context? = null): FlutterPlug
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     applicationContext = flutterPluginBinding.applicationContext
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_config_plus")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_env_config")
     channel.setMethodCallHandler(this)
   }
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_config_plus/flutter_config_plus.dart';
+import 'package:flutter_env_config/flutter_env_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterConfigPlus.loadEnvVariables();
+  await FlutterEnvConfig.loadEnvVariables();
   runApp(const MyApp());
 }
 
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final allValues = <Widget>[];
-    FlutterConfigPlus.variables.forEach((k, v) {
+    FlutterEnvConfig.variables.forEach((k, v) {
       allValues.add(Text('$k: $v'));
     });
     return MaterialApp(
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
                 height: 20,
               ),
               Text(
-                'Values of version: ${FlutterConfigPlus.get('APP_VERSION_NAME')}+${FlutterConfigPlus.get('APP_VERSION_BUILD')}',
+                'Values of version: ${FlutterEnvConfig.get('APP_VERSION_NAME')}+${FlutterEnvConfig.get('APP_VERSION_BUILD')}',
               ),
             ],
           ),

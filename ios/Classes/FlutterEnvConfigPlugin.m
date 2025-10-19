@@ -1,12 +1,12 @@
-#import "FlutterConfigPlusPlugin.h"
+#import "FlutterEnvConfigPlugin.h"
 #import "GeneratedDotEnv.m" // written during build by BuildDotenvConfig.ruby
 
-@implementation FlutterConfigPlusPlugin
+@implementation FlutterEnvConfigPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"flutter_config_plus"
+      methodChannelWithName:@"flutter_env_config"
             binaryMessenger:[registrar messenger]];
-  FlutterConfigPlusPlugin* instance = [[FlutterConfigPlusPlugin alloc] init];
+  FlutterEnvConfigPlugin* instance = [[FlutterEnvConfigPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 

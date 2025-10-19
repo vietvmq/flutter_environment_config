@@ -1,7 +1,7 @@
-name: flutter_config_plus
+name: flutter_env_config
 description: Plugin that exposes environment variables to your Dart code in Flutter as well as to your native code in iOS and Android. Bring some 12 factor love to your Flutter apps.
 version: 1.0.0
-homepage: https://github.com/vietvmq/flutter_config_plus
+homepage: https://github.com/vietvmq/flutter_env_config
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -35,10 +35,10 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.vietvmq.flutter_config_plus
-        pluginClass: FlutterConfigPlusPlugin
+        package: com.vietvmq.flutter_env_config
+        pluginClass: FlutterEnvConfigPlugin
       ios:
-        pluginClass: FlutterConfigPlusPlugin
+        pluginClass: FlutterEnvConfigPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

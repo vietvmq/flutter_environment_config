@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_config_plus/flutter_config_plus.dart';
+import 'package:flutter_env_config/flutter_env_config.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('flutter_config_plus');
+  const MethodChannel channel = MethodChannel('flutter_env_config');
 
   setUp(() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
@@ -16,7 +16,7 @@ void main() {
   });
 
   test('get variable', () async {
-    await FlutterConfigPlus.loadEnvVariables();
-    expect(FlutterConfigPlus.get('FABRIC'), 67);
+    await FlutterEnvConfig.loadEnvVariables();
+    expect(FlutterEnvConfig.get('FABRIC'), 67);
   });
 }

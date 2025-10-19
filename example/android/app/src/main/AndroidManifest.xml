@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.vietvmq.flutter_config_plus_example">
+    package="com.vietvmq.flutter_env_config_example">
    <application
-        android:label="flutter_config_plus_example"
+        android:label="flutter_env_config_example"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,6 +1,6 @@
-# flutter_config_plus_example
+# flutter_env_config_example
 
-Demonstrates how to use the flutter_config_plus plugin.
+Demonstrates how to use the flutter_env_config plugin.
 
 ## Getting Started
 

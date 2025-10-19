@@ -8,7 +8,7 @@ Right below `apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gra
 
 add the following line:
 
-`apply from: project(':flutter_config_plus').projectDir.getPath() + "/dotenv.gradle"`
+`apply from: project(':flutter_env_config').projectDir.getPath() + "/dotenv.gradle"`
 
 **Building a release version**
 
@@ -71,7 +71,7 @@ project.ext.envConfigFiles = [
     anothercustombuild: ".env",
 ]
 
-apply from: project(':flutter_config_plus').projectDir.getPath() + "/dotenv.gradle"
+apply from: project(':flutter_env_config').projectDir.getPath() + "/dotenv.gradle"
 ```
 
 ## Different Package Names

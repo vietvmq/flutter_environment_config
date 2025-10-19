@@ -31,10 +31,10 @@ project.ext.envConfigFiles = [
         develop: ".env.dev",
         staging: ".env.staging",
 ]
-apply from: project(':flutter_config_plus').projectDir.getPath() + "/dotenv.gradle"
+apply from: project(':flutter_env_config').projectDir.getPath() + "/dotenv.gradle"
 
 android {
-    namespace 'com.vietvmq.flutter_config_plus_example'
+    namespace 'com.vietvmq.flutter_env_config_example'
     compileSdk 35
     ndkVersion flutter.ndkVersion
 
@@ -57,7 +57,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.vietvmq.flutter_config_plus_example"
+        applicationId "com.vietvmq.flutter_env_config_example"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 24

@@ -1,4 +1,4 @@
-group 'com.vietvmq.flutter_config_plus'
+group 'com.vietvmq.flutter_env_config'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'com.vietvmq.flutter_config_plus' 
+    namespace 'com.vietvmq.flutter_env_config' 
     compileSdkVersion 33
 
     compileOptions {

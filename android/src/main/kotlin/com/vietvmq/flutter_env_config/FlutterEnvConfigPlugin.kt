@@ -65,7 +65,7 @@ class FlutterEnvConfigPlugin(private val context: Context? = null): FlutterPlugi
         variables += it.name to extractValue(it)
       }
     } catch (e: ClassNotFoundException) {
-      Log.d("FlutterConfigPlus", "Could not access BuildConfig")
+      Log.d("FlutterEnvConfig", "Could not access BuildConfig")
     }
     return variables
   }

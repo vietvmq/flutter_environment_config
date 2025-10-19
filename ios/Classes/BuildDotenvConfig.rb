@@ -21,7 +21,7 @@ template = <<EOF
   #define DOT_ENV @{ #{dotenv_objc} };
 EOF
 
-# write it so that FLutterConfigPlusPlugin.m can return it
+# write it so that FlutterEnvConfigPlugin.m can return it
 path = File.join(m_output_path, 'GeneratedDotEnv.m')
 File.open(path, 'w') { |f| f.puts template }
 

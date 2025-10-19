@@ -6,13 +6,13 @@ Read variables declared in `.env` from your Obj-C classes like:
 
 ```objective-c
 // import header
-#import "FlutterConfigPlusPlugin.h"
+#import "FlutterEnvConfigPlugin.h"
 
 // then read individual keys like:
-NSString *apiUrl = [FlutterConfigPlusPlugin envFor:@"API_URL"];
+NSString *apiUrl = [FlutterEnvConfigPlugin envFor:@"API_URL"];
 
 // or just fetch the whole config
-NSDictionary *config = [FlutterConfigPlusPlugin env];
+NSDictionary *config = [FlutterEnvConfigPlugin env];
 ```
 
 ### Availability in Build settings and Info.plist

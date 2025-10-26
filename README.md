@@ -1,77 +1,171 @@
-# Env Config Variables for your Flutter apps
+# Flutter Env Config
 
-Plugin that exposes environment variables to your Dart code in Flutter as well as to your native code in iOS and Android.
+[![pub package](https://img.shields.io/pub/v/flutter_env_config.svg)](https://pub.dev/packages/flutter_env_config)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A Flutter plugin that exposes environment variables to your Dart code as well as to your native code in iOS and Android. Bring some [12 factor](https://12factor.net/config) love to your Flutter apps! 🚀
 
 Inspired by [react-native-config](https://github.com/luggit/react-native-config)
 
-## Basic Usage
+## ✨ Features
 
-Create a new file `.env` in the root of your Flutter app:
+- 🔧 Load environment variables from `.env` files
+- 📱 Access variables in Dart, iOS (Swift/Objective-C), and Android (Kotlin/Java)
+- 🧪 Testing support with mock values
+- 🔒 Multiple environment support (dev, staging, prod)
+- ⚡ Zero configuration for iOS, minimal setup for Android
 
+## 🚀 Quick Start
+
+### 1. Create Environment File
+
+Create a `.env` file in the root of your Flutter project:
+
+```bash
+# API Configuration
+API_URL=https://api.myapp.com
+API_KEY=your-api-key-here
+
+# Feature Flags
+ENABLE_ANALYTICS=true
+DEBUG_MODE=false
+
+# App Configuration
+APP_NAME=MyAwesomeApp
+VERSION_NAME=1.0.0
 ```
-API_URL=https://myapi.com
-FABRIC_ID=abcdefgh
-```
 
-load all environment varibles in `main.dart`
+### 2. Load Variables in Dart
 
 ```dart
 import 'package:flutter_env_config/flutter_env_config.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterEnvConfig
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load environment variables
   await FlutterEnvConfig.loadEnvVariables();
-
+  
   runApp(MyApp());
 }
 ```
 
-Now you can access your environment varibles anywhere in your app.
+### 3. Access Variables Anywhere
 
 ```dart
 import 'package:flutter_env_config/flutter_env_config.dart';
 
-FlutterEnvConfig.get('FABRIC_ID') // returns 'abcdefgh'
+class ApiService {
+  static String get baseUrl => FlutterEnvConfig.get('API_URL') ?? '';
+  static String get apiKey => FlutterEnvConfig.get('API_KEY') ?? '';
+  static bool get enableAnalytics => 
+    FlutterEnvConfig.get('ENABLE_ANALYTICS') == 'true';
+}
+
+// Usage
+final url = ApiService.baseUrl; // returns 'https://api.myapp.com'
 ```
 
-Keep in mind this module doesn't obfuscate or encrypt secrets for packaging, so **do not store sensitive keys in `.env`**. It's [basically impossible to prevent users from reverse engineering mobile app secrets](https://rammic.github.io/2015/07/28/hiding-secrets-in-android-apps/), so design your app (and APIs) with that in mind.
+## ⚠️ Security Notice
 
-<br/>
+This plugin doesn't obfuscate or encrypt secrets for packaging. **Never store sensitive information in `.env` files** as they can be reverse-engineered from your app bundle. 
 
-### Load Environment Varibles in Swift
+For sensitive data, use secure storage solutions or server-side configuration.
 
-First import the plugin
-```Swift
+## 📱 Native Platform Usage
+
+### iOS (Swift/Objective-C)
+
+First, import the plugin:
+
+```swift
 import flutter_env_config
 ```
-Then you can use the .env Variable, replace `ENV_API_KEY` with yours.
-```Swift
-flutter_env_config.FlutterEnvConfigPlugin.env(for: "ENV_API_KEY")
+
+Then access your environment variables:
+
+```swift
+let apiKey = flutter_env_config.FlutterEnvConfigPlugin.env(for: "API_KEY")
 ```
 
+### Android (Kotlin/Java)
 
-## Getting Started
+Environment variables are automatically available in your Android build process. See the [Android Setup Guide](docs/ANDROID.md) for configuration details.
 
-Install the latest version of the plugin
+Environment variables are automatically available in your Android build process. See the [Android Setup Guide](docs/ANDROID.md) for configuration details.
 
-Refer to [Android Setup Guide](docs/ANDROID.md) for initial setup and advanced options
+## 📝 Installation
 
-No additional setup is required for iOS, however, for advanced usage refer to the [iOS Setup Guide](docs/IOS.md)
+Add this to your package's `pubspec.yaml` file:
 
-## Testing
+```yaml
+dependencies:
+  flutter_env_config: ^2.0.0
+```
 
-Whenever you need to use `FlutterEnvConfig` in your tests, simply use the method `loadValueForTesting`
+Then run:
+
+```bash
+flutter pub get
+```
+
+## 🛠️ Setup
+
+### iOS Setup
+
+No additional setup required! 🎉
+
+### Android Setup
+
+Refer to the [Android Setup Guide](docs/ANDROID.md) for initial configuration and advanced options.
+
+## 🧪 Testing
+
+Use `loadValueForTesting` to mock environment variables in your tests:
 
 ```dart
 import 'package:flutter_env_config/flutter_env_config.dart';
 
 void main() {
-  FlutterEnvConfig.loadValueForTesting({'BASE_URL': 'https://www.mockurl.com'});
+  setUp(() {
+    FlutterEnvConfig.loadValueForTesting({
+      'API_URL': 'https://test-api.com',
+      'DEBUG_MODE': 'true',
+    });
+  });
   
-  test('mock http client test', () {
-    final client = HttpClient(
-      baseUrl: FlutterEnvConfig.get('BASE_URL')
-    );
+  test('should use test environment variables', () {
+    final apiUrl = FlutterEnvConfig.get('API_URL');
+    expect(apiUrl, equals('https://test-api.com'));
   });
 }
 ```
+
+## 🌍 Multiple Environments
+
+You can use different `.env` files for different environments:
+
+```bash
+.env              # Default
+.env.development  # Development
+.env.staging      # Staging  
+.env.production   # Production
+```
+
+## 📚 Documentation
+
+- [Android Setup Guide](docs/ANDROID.md) - Detailed Android configuration
+- [iOS Setup Guide](docs/IOS.md) - Advanced iOS usage
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Inspired by [react-native-config](https://github.com/luggit/react-native-config)
+- Built with ❤️ for the Flutter community

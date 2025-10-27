@@ -1,6 +1,6 @@
-# Flutter Env Config
+# Flutter Environment Config
 
-[![pub package](https://img.shields.io/pub/v/flutter_env_config.svg)](https://pub.dev/packages/flutter_env_config)
+[![pub package](https://img.shields.io/pub/v/flutter_environment_config.svg)](https://pub.dev/packages/flutter_environment_config)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A Flutter plugin that exposes environment variables to your Dart code as well as to your native code in iOS and Android. Bring some [12 factor](https://12factor.net/config) love to your Flutter apps! 🚀
@@ -38,13 +38,13 @@ VERSION_NAME=1.0.0
 ### 2. Load Variables in Dart
 
 ```dart
-import 'package:flutter_env_config/flutter_env_config.dart';
+import 'package:flutter_environment_config/flutter_environment_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Load environment variables
-  await FlutterEnvConfig.loadEnvVariables();
+  await FlutterEnvironmentConfig.loadEnvVariables();
   
   runApp(MyApp());
 }
@@ -53,13 +53,13 @@ void main() async {
 ### 3. Access Variables Anywhere
 
 ```dart
-import 'package:flutter_env_config/flutter_env_config.dart';
+import 'package:flutter_environment_config/flutter_environment_config.dart';
 
 class ApiService {
-  static String get baseUrl => FlutterEnvConfig.get('API_URL') ?? '';
-  static String get apiKey => FlutterEnvConfig.get('API_KEY') ?? '';
+  static String get baseUrl => FlutterEnvironmentConfig.get('API_URL') ?? '';
+  static String get apiKey => FlutterEnvironmentConfig.get('API_KEY') ?? '';
   static bool get enableAnalytics => 
-    FlutterEnvConfig.get('ENABLE_ANALYTICS') == 'true';
+    FlutterEnvironmentConfig.get('ENABLE_ANALYTICS') == 'true';
 }
 
 // Usage
@@ -79,13 +79,13 @@ For sensitive data, use secure storage solutions or server-side configuration.
 First, import the plugin:
 
 ```swift
-import flutter_env_config
+import flutter_environment_config
 ```
 
 Then access your environment variables:
 
 ```swift
-let apiKey = flutter_env_config.FlutterEnvConfigPlugin.env(for: "API_KEY")
+let apiKey = flutter_environment_config.FlutterEnvironmentConfigPlugin.env(for: "API_KEY")
 ```
 
 ### Android (Kotlin/Java)
@@ -100,7 +100,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_env_config: ^2.0.0
+  flutter_environment_config: ^2.0.0
 ```
 
 Then run:
@@ -124,18 +124,18 @@ Refer to the [Android Setup Guide](docs/ANDROID.md) for initial configuration an
 Use `loadValueForTesting` to mock environment variables in your tests:
 
 ```dart
-import 'package:flutter_env_config/flutter_env_config.dart';
+import 'package:flutter_environment_config/flutter_environment_config.dart';
 
 void main() {
   setUp(() {
-    FlutterEnvConfig.loadValueForTesting({
+    FlutterEnvironmentConfig.loadValueForTesting({
       'API_URL': 'https://test-api.com',
       'DEBUG_MODE': 'true',
     });
   });
   
   test('should use test environment variables', () {
-    final apiUrl = FlutterEnvConfig.get('API_URL');
+    final apiUrl = FlutterEnvironmentConfig.get('API_URL');
     expect(apiUrl, equals('https://test-api.com'));
   });
 }

@@ -2,7 +2,7 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 Pod::Spec.new do |s|
-  s.name             = 'flutter_env_config'
+  s.name             = 'flutter_environment_config'
   s.version          = '0.0.1'
   s.summary          = 'Env Config Variables for your Flutter Apps.'
   s.description      = <<-DESC

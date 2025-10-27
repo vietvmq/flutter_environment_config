@@ -1,19 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-/// Flutter env config writes environment variables to `BuildConfig` class for android
+/// Flutter environment config writes environment variables to `BuildConfig` class for android
 /// and as a `NSDictionary` for iOS
-class FlutterEnvConfig {
+class FlutterEnvironmentConfig {
   /// An instance of all environment variables
   late Map<String, dynamic> _variables;
 
   // Private Constructor
-  FlutterEnvConfig._internal();
+  FlutterEnvironmentConfig._internal();
 
-  // Instance of FlutterEnvConfig
-  static final FlutterEnvConfig _instance = FlutterEnvConfig._internal();
+  // Instance of FlutterEnvironmentConfig
+  static final FlutterEnvironmentConfig _instance = FlutterEnvironmentConfig._internal();
 
-  static const MethodChannel _channel = MethodChannel('flutter_env_config');
+  static const MethodChannel _channel = MethodChannel('flutter_environment_config');
 
   /// Variables need to be loaded on app startup, recommend to do it `main.dart`
   static loadEnvVariables() async {
@@ -28,7 +28,7 @@ class FlutterEnvConfig {
 
     if (variables.isEmpty) {
       print(
-        'FlutterEnvConfig Variables are Empty\n'
+        'FlutterEnvironmentConfig Variables are Empty\n'
         'Ensure you have a .env file and you\n'
         'have loaded the variables',
       );
@@ -36,7 +36,7 @@ class FlutterEnvConfig {
       return variables[key];
     } else {
       print(
-        'FlutterEnvConfig Value for Key($key) not found\n'
+        'FlutterEnvironmentConfig Value for Key($key) not found\n'
         'Ensure you have it in .env file',
       );
     }

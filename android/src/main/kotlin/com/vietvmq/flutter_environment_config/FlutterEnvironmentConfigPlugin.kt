@@ -1,4 +1,4 @@
-package com.vietvmq.flutter_env_config
+package com.vietvmq.flutter_environment_config
 
 import android.content.Context
 import android.content.res.Resources
@@ -11,7 +11,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.lang.reflect.Field
 
-class FlutterEnvConfigPlugin(private val context: Context? = null): FlutterPlugin, MethodCallHandler {
+class FlutterEnvironmentConfigPlugin(private val context: Context? = null): FlutterPlugin, MethodCallHandler {
 
   private var applicationContext: Context? = context
 
@@ -19,7 +19,7 @@ class FlutterEnvConfigPlugin(private val context: Context? = null): FlutterPlugi
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     applicationContext = flutterPluginBinding.applicationContext
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_env_config")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_environment_config")
     channel.setMethodCallHandler(this)
   }
 
@@ -65,7 +65,7 @@ class FlutterEnvConfigPlugin(private val context: Context? = null): FlutterPlugi
         variables += it.name to extractValue(it)
       }
     } catch (e: ClassNotFoundException) {
-      Log.d("FlutterEnvConfig", "Could not access BuildConfig")
+      Log.d("FlutterEnvironmentConfig", "Could not access BuildConfig")
     }
     return variables
   }

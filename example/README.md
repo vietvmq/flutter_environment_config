@@ -1,6 +1,6 @@
-# flutter_env_config_example
+# flutter_environment_config_example
 
-Demonstrates how to use the flutter_env_config plugin.
+Demonstrates how to use the flutter_environment_config plugin.
 
 ## Getting Started
 

@@ -28,10 +28,10 @@ Extra steps are required if you are reading env varibles from your `info.plist` 
    ```
 
    It is also recommended to add this file to gitignore
+
    ```
    **/ios/Flutter/tmp.xcconfig
    ```
-
 
 2. In the Xcode menu, go to Product > Scheme > Edit Scheme
    ![img](./pic2.png)
@@ -67,6 +67,7 @@ Start by creating a new scheme:
 - Give it a proper name on the top left. For instance: "Myapp (staging)"
 
 #### NOTE
+
 You need to make sure that your scheme name matches the `flavor` name which you defined on the flutter side of things
 eg. `flutter run ios --flavor develop`
 

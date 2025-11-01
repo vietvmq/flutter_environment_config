@@ -16,10 +16,10 @@ When building your apk for release, the R8 code shrinker obfuscates the `BuildCo
 
 1. Add file `android/app/proguard-rules.pro` to your app's project.
 2. Add the below line to the newly created `proguard-rules.pro` file:
-    ```
-    -keep class com.yourcompany.app.BuildConfig { *; }
-    ```
-    where `com.yourcompany.app` should be replaced with your app's package name.
+   ```
+   -keep class com.yourcompany.app.BuildConfig { *; }
+   ```
+   where `com.yourcompany.app` should be replaced with your app's package name.
 
 ## Usage in Java/Kotlin Code
 

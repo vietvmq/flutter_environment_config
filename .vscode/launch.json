@@ -13,7 +13,7 @@
       "flutterMode": "debug"
     },
     {
-      "name": "develop",
+      "name": "staging",
       "cwd": "example",
       "request": "launch",
       "type": "dart",
@@ -21,7 +21,7 @@
       "flutterMode": "debug"
     },
     {
-      "name": "develop",
+      "name": "production",
       "cwd": "example",
       "request": "launch",
       "type": "dart",

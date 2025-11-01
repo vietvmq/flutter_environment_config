@@ -28,8 +28,9 @@ if (flutterVersionName == null) {
 }
 
 project.ext.envConfigFiles = [
-        develop: ".env.dev",
+        develop: ".env.develop",
         staging: ".env.staging",
+        production: ".env.production",
 ]
 apply from: project(':flutter_environment_config').projectDir.getPath() + "/dotenv.gradle"
 

@@ -12,26 +12,64 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allValues = <Widget>[];
-    FlutterEnvironmentConfig.variables.forEach((k, v) {
-      allValues.add(Text('$k: $v'));
-    });
+    final data = FlutterEnvironmentConfig.variables.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Example app'),
         ),
-        body: Center(
-          child: Column(
-            children: [
-              ...allValues,
-              const SizedBox(
-                height: 20,
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: MediaQuery.of(context).size.width - 32,
               ),
-              Text(
-                'Values of version: ${FlutterEnvironmentConfig.get('APP_VERSION_NAME')}+${FlutterEnvironmentConfig.get('APP_VERSION_BUILD')}',
+              child: DataTable(
+                columnSpacing: 20,
+                columns: const [
+                  DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        'Key',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        'Value',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+                rows: data.map(
+                  (e) {
+                    return DataRow(
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.key,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        DataCell(
+                          Text(
+                            e.value ?? '',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ).toList(),
               ),
-            ],
+            ),
           ),
         ),
       ),

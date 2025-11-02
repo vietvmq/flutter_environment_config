@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-11-02
+
+### 🎉 Major Features Added
+
+- 🚀 **Type-Safe Code Generation**: Automatic generation of type-safe getters with intelligent type inference
+- 🔍 **Recursive File Scanning**: Automatically discovers `.env` files in subdirectories
+- 📦 **Multi-Package Support**: Seamless integration with complex project structures and monorepos
+- 🌍 **Cross-Platform Generator**: Full support for Windows, macOS, and Linux development environments
+- 🎨 **Enhanced CLI**: Beautiful colored terminal output with detailed progress information
+
+### 🛠️ Generator Features
+
+- ✨ **Automatic Type Detection**: Infers `String`, `bool`, `int`, `double` types from environment values
+- 📂 **Smart Project Detection**: Automatically finds configuration from sub-packages
+- 🔄 **Multiple Dependency Sources**: Supports path, git, and hosted package dependencies
+- 🎯 **Custom Output Directories**: Configurable output locations via `pubspec.yaml`
+- 📊 **Detailed Reporting**: Shows discovered files, generated variables, and output locations
+
+### 🌐 Cross-Platform Improvements
+
+- 🖥️ **Windows Support**: Uses `%LOCALAPPDATA%\Pub\Cache` or `%APPDATA%\Pub\Cache`
+- 🍎 **macOS Support**: Uses `~/.pub-cache` with proper HOME detection
+- 🐧 **Linux Support**: Full compatibility with Linux development environments
+- 🔧 **PUB_CACHE Detection**: Respects custom `PUB_CACHE` environment variable
+
+### 📝 CLI Commands
+
+- `dart run flutter_environment_config:generate` - Generate type-safe code
+- Automatic detection of generator location across all dependency types
+- Intelligent fallback to pub cache when local paths not available
+
+### 🎨 Developer Experience
+
+- 🌈 **Colored Output**: Cyan, blue, yellow, magenta terminal colors for better readability
+- 📋 **Progress Tracking**: Real-time feedback on file discovery and code generation
+- 🔍 **Debug Information**: Detailed logging for troubleshooting
+- ✅ **Success Indicators**: Clear completion messages with file locations
+
+### 📚 Documentation Updates
+
+- 📖 **Comprehensive README**: Updated with all new features and examples
+- 🛠️ **Setup Guides**: Enhanced installation and configuration instructions
+- 🧪 **Testing Examples**: Updated testing patterns with generated code
+- 🔧 **Configuration Reference**: Complete pubspec.yaml configuration options
+
 ## [2.0.0] - 2025-10-26
 
 ### Breaking Changes

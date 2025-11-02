@@ -13,7 +13,7 @@ Inspired by [react-native-config](https://github.com/luggit/react-native-config)
 - 📱 Access variables in Dart, iOS (Swift/Objective-C), and Android (Kotlin/Java)
 - 🧪 Testing support with mock values
 - 🔒 Multiple environment support (dev, staging, prod)
-- ⚡ Zero configuration for iOS, minimal setup for Android
+- ⚡  Zero configuration for iOS, minimal setup for Android
 
 ## 🚀 Quick Start
 

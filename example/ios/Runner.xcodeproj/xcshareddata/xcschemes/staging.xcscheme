@@ -106,7 +106,7 @@
       buildConfiguration = "Profile-staging">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Profile-staging"
+      buildConfiguration = "Release-staging"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

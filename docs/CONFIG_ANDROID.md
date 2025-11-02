@@ -193,6 +193,15 @@ android {
 ### Build Commands
 
 ```bash
+# Run in development
+flutter run --flavor develop
+
+# Run in staging
+flutter run --flavor staging
+
+# Run in production
+flutter run --flavor production
+
 # Build development APK
 flutter build apk --flavor develop
 
@@ -200,10 +209,54 @@ flutter build apk --flavor develop
 flutter build apk --flavor staging
 
 # Build production APK
-flutter build apk --flavor production
+flutter build apk --flavor production --release
+```
 
-# Run on device with specific flavor
-flutter run --flavor develop
+## 📋 Best Practices
+
+### 1. Environment Variable Naming
+
+Use consistent naming conventions:
+
+```bash
+# App Information
+APP_NAME=My App
+APP_ID=com.company.myapp
+VERSION_NAME=1.0.0
+VERSION_CODE=1
+
+# API Configuration
+API_URL=https://api.example.com
+API_TIMEOUT=30000
+
+# Feature Flags
+ENABLE_ANALYTICS=true
+ENABLE_CRASH_REPORTING=false
+DEBUG_MODE=true
+
+# Third-party Keys (be careful with sensitive data)
+GOOGLE_MAPS_API_KEY=your_key_here
+FIREBASE_PROJECT_ID=your_project_id
+```
+
+### 2. Git Configuration
+
+Add to your `.gitignore`:
+
+```gitignore
+# Environment files
+.env.develop
+.env.staging
+.env.production
+.env.local
+```
+
+Create example files for team members:
+
+```text
+.env.develop.example
+.env.staging.example
+.env.production.example
 ```
 
 ## ⚠️ Security
@@ -224,10 +277,49 @@ flutter run --flavor develop
 
 ## 🆘 Troubleshooting
 
-**Variables are null in release:**
+### Common Issues
 
-- Check ProGuard rules are applied
-- Verify environment files are loaded
+1. **Environment variables not loading**
+
+   - Ensure `await FlutterEnvironmentConfig.loadEnvVariables()` is called before `runApp()`
+   - Check that environment files exist in the project root
+   - Verify file naming matches exactly (case-sensitive)
+
+2. **Variables are null in release builds**
+
+   - Check ProGuard rules are applied correctly
+   - Verify environment files are loaded properly
+   - Ensure variables are defined in the correct environment file
+
+3. **Android build issues**
+
+   - Ensure gradle files are properly configured
+   - Check that flavor names match environment file configurations
+   - Verify ProGuard rules are in place for release builds
+
+4. **Variables returning null**
+   - Check spelling of variable names (case-sensitive)
+   - Ensure variables are defined in the correct environment file
+   - Verify the correct environment file is being loaded
+
+### Debug Tips
+
+Add debugging to see which environment file is loaded:
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterEnvironmentConfig.loadEnvVariables();
+
+  // Debug: Print all loaded variables
+  print('Loaded environment variables:');
+  FlutterEnvironmentConfig.variables.forEach((key, value) {
+    print('$key: $value');
+  });
+
+  runApp(const MyApp());
+}
+```
 
 **Variables not updating:**
 

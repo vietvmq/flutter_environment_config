@@ -338,16 +338,14 @@ Future<List<String>> scanEnvFiles(Directory directory) async {
     }
   }
   
-  // If no files found in root, scan subdirectories
-  if (envFiles.isEmpty) {
-    await for (final entity in directory.list()) {
-      if (entity is Directory) {
-        final dirName = entity.path.split('/').last;
-        // Skip common directories that shouldn't contain env files
-        if (!_shouldSkipDirectory(dirName)) {
-          final subDirFiles = await _scanDirectoryForEnvFiles(entity);
-          envFiles.addAll(subDirFiles);
-        }
+  // Also scan subdirectories regardless of root files
+  await for (final entity in directory.list()) {
+    if (entity is Directory) {
+      final dirName = entity.path.split('/').last;
+      // Skip common directories that shouldn't contain env files
+      if (!_shouldSkipDirectory(dirName)) {
+        final subDirFiles = await _scanDirectoryForEnvFiles(entity);
+        envFiles.addAll(subDirFiles);
       }
     }
   }

@@ -1,132 +1,143 @@
 #!/usr/bin/env dart
 
-/// Flutter Environment Config Generator Runner
-/// Automatically copies and runs the generator in your project
-
-import 'dart:io';
+import "dart:io";
+import "dart:convert";
 
 void main() async {
   print('🔧 Flutter Environment Config Generator');
-  print('');
-
-  // Check if we're in a consumer project or library
-  final pubspecFile = File('pubspec.yaml');
-  if (!pubspecFile.existsSync()) {
-    print('❌ No pubspec.yaml found. Run this from your Flutter project root.');
-    exit(1);
-  }
-
-  // Check for environment files (recursive scan)
-  final envFiles = <String>[];
-  final directory = Directory.current;
   
-  // First scan root directory
-  await for (final entity in directory.list()) {
-    if (entity is File) {
-      final name = entity.path.split('/').last;
-      // Look for .env, .env.*, but skip .env.example files
-      if (name == '.env' || 
-          (name.startsWith('.env.') && !name.endsWith('.example'))) {
-        envFiles.add(name);
-      }
-    }
-  }
-  
-  // If no files found in root, scan subdirectories
-  if (envFiles.isEmpty) {
-    await for (final entity in directory.list()) {
-      if (entity is Directory) {
-        final dirName = entity.path.split('/').last;
-        // Skip common directories that shouldn't contain env files
-        if (!_shouldSkipDirectory(dirName)) {
-          final subDirFiles = await _scanDirectoryForEnvFiles(entity);
-          envFiles.addAll(subDirFiles.map((path) => path.split('/').last));
-        }
-      }
-    }
-  }
-
-  if (envFiles.isEmpty) {
-    print('❌ No environment files found!');
-    print('   Create at least one: .env, .env.develop, .env.staging, .env.production');
-    exit(1);
-  }
-
-  print('✅ Found environment files: ${envFiles.join(', ')}');
-
-  // Try to find the generator script in the package
+  // Find generator based on dependency type
   final generatorPath = await _findGenerator();
   
   if (generatorPath != null) {
-    print('🚀 Running generator...');
-    final result = await Process.run('dart', [generatorPath]);
+    print('🚀 Running generator from: $generatorPath');
+    
+    // Copy generator to temporary location in current project
+    final tempDir = Directory('.dart_tool/flutter_environment_config');
+    if (!tempDir.existsSync()) {
+      tempDir.createSync(recursive: true);
+    }
+    
+    final tempGeneratorPath = '${tempDir.path}/generate_environment_config.dart';
+    final generatorFile = File(generatorPath);
+    final tempGeneratorFile = File(tempGeneratorPath);
+    
+    // Copy generator content
+    await tempGeneratorFile.writeAsString(await generatorFile.readAsString());
+    
+    // Run from current directory with temp file
+    final result = await Process.run(
+      'dart', 
+      [tempGeneratorPath],
+      workingDirectory: Directory.current.path,
+    );
+    
     print(result.stdout);
     if (result.stderr.toString().isNotEmpty) {
-      print('⚠️  ${result.stderr}');
+      print('⚠️ ${result.stderr}');
     }
+    
+    // Clean up temp file
+    if (tempGeneratorFile.existsSync()) {
+      tempGeneratorFile.deleteSync();
+    }
+    
+    exit(result.exitCode);
   } else {
-    print('');
-    print('📋 Manual Setup Required:');
-    print('1. Add to pubspec.yaml dev_dependencies:');
-    print('   yaml: ^3.1.2');
-    print('');
-    print('2. Copy generator from:');
-    print('   https://github.com/vietvmq/flutter_environment_config');
-    print('   /generator/generate_environment_config.dart');
-    print('');
-    print('3. Run: dart generate_environment_config.dart');
+    print('❌ Generator not found.');
+    print('💡 Make sure flutter_environment_config is added to your project dependencies');
+    exit(1);
   }
 }
 
 Future<String?> _findGenerator() async {
-  // Try to find generator in different locations
-  final locations = [
-    'generator/generate_environment_config.dart',  // In development
-    '../generator/generate_environment_config.dart',  // From example
-    '../../generator/generate_environment_config.dart',  // Alternative
-  ];
-
-  for (final location in locations) {
-    if (File(location).existsSync()) {
-      return location;
-    }
-  }
-
-  return null;
-}
-
-/// Scan a specific directory for env files (non-recursive to avoid going too deep)
-Future<List<String>> _scanDirectoryForEnvFiles(Directory directory) async {
-  final envFiles = <String>[];
+  // Get dependency info
+  final result = await Process.run('flutter', ['pub', 'deps', '--json']);
+  if (result.exitCode != 0) return null;
   
   try {
-    await for (final entity in directory.list()) {
-      if (entity is File) {
-        final name = entity.path.split('/').last;
-        // Look for .env, .env.*, but skip .env.example files
-        if (name == '.env' || 
-            (name.startsWith('.env.') && !name.endsWith('.example'))) {
-          envFiles.add(entity.path);
+    final depsJson = jsonDecode(result.stdout);
+    final packages = depsJson['packages'] as List?;
+    
+    if (packages != null) {
+      for (final package in packages) {
+        if (package['name'] == 'flutter_environment_config') {
+          final source = package['source'];
+          final description = package['description'];
+          
+          switch (source) {
+            case 'path':
+              // Local path dependency
+              final path = description['path'];
+              return '$path/generator/generate_environment_config.dart';
+              
+            case 'git':
+              // Git dependency - find in pub cache
+              return await _findInGitCache();
+              
+            case 'hosted':
+              // Hosted dependency - find in pub cache
+              return await _findInHostedCache();
+          }
         }
       }
     }
   } catch (e) {
-    // Ignore permission errors or other issues
+    // Fallback to manual search
   }
   
-  return envFiles;
+  // Fallback: try all possible locations
+  return await _findInGitCache() ?? await _findInHostedCache();
 }
 
-/// Check if directory should be skipped during env file scanning
-bool _shouldSkipDirectory(String dirName) {
-  final skipDirs = {
-    'node_modules', '.git', '.dart_tool', 'build', '.vscode', '.idea',
-    'ios', 'android', 'web', 'linux', 'macos', 'windows', // Flutter platform dirs
-    'lib', 'test', 'integration_test', // Dart/Flutter source dirs (usually don't contain env)
-    '.pub-cache', '.flutter-plugins-dependencies',
-    'Pods', 'Runner.xcworkspace', 'Runner.xcodeproj', // iOS specific
-    'gradle', '.gradle', 'app', 'src', // Android specific
-  };
+Future<String?> _findInGitCache() async {
+  final home = Platform.environment['HOME'];
+  if (home == null) return null;
   
-  return skipDirs.contains(dirName) || dirName.startsWith('.');
+  final gitDir = Directory('$home/.pub-cache/git');
+  if (!gitDir.existsSync()) return null;
+  
+  try {
+    await for (final entity in gitDir.list()) {
+      if (entity is Directory) {
+        final dirName = entity.path.split(Platform.pathSeparator).last;
+        if (dirName.startsWith('flutter_environment_config-')) {
+          final generatorPath = '${entity.path}/generator/generate_environment_config.dart';
+          if (File(generatorPath).existsSync()) {
+            return generatorPath;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // Ignore
+  }
+  
+  return null;
+}
+
+Future<String?> _findInHostedCache() async {
+  final home = Platform.environment['HOME'];
+  if (home == null) return null;
+  
+  final hostedDir = Directory('$home/.pub-cache/hosted/pub.dev');
+  if (!hostedDir.existsSync()) return null;
+  
+  try {
+    await for (final entity in hostedDir.list()) {
+      if (entity is Directory) {
+        final dirName = entity.path.split(Platform.pathSeparator).last;
+        if (dirName.startsWith('flutter_environment_config-')) {
+          final generatorPath = '${entity.path}/generator/generate_environment_config.dart';
+          if (File(generatorPath).existsSync()) {
+            return generatorPath;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // Ignore
+  }
+  
+  return null;
 }

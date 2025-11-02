@@ -93,7 +93,7 @@ Go to **Build > Pre-actions** and add **New Run Script Action**:
 **First Script:**
 
 ```bash
-echo ".env" > ${SRCROOT}/.envfile
+echo "/env/.env" > ${SRCROOT}/.envfile
 ```
 
 **Second Script:**

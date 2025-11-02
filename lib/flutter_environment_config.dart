@@ -3,7 +3,8 @@ library flutter_environment_config;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-/// Flutter environment config writes environment variables to `BuildConfig` class for android
+/// Flutter environment config writes environment variables
+/// to `BuildConfig` class for android
 /// and as a `NSDictionary` for iOS
 class FlutterEnvironmentConfig {
   /// An instance of all environment variables
@@ -24,7 +25,6 @@ class FlutterEnvironmentConfig {
     Map<String, dynamic>? webVariables,
   }) async {
     Map<String, dynamic>? loadedVariables;
-
     if (kIsWeb) {
       // Web platform - use provided variables
       loadedVariables = webVariables;
@@ -34,7 +34,9 @@ class FlutterEnvironmentConfig {
         loadedVariables = await _channel.invokeMapMethod('loadEnvVariables');
       } catch (e) {
         if (kDebugMode) {
-          print('Failed to load environment variables: $e');
+          print(
+            'FlutterEnvironmentConfig: Failed to load environment variables: $e',
+          );
         }
         loadedVariables = {};
       }
@@ -49,7 +51,7 @@ class FlutterEnvironmentConfig {
 
     if (variables.isEmpty) {
       print(
-        'FlutterEnvironmentConfig Variables are Empty\n'
+        'FlutterEnvironmentConfig: Variables are Empty\n'
         'Ensure you have a .env file and you\n'
         'have loaded the variables',
       );
@@ -57,7 +59,7 @@ class FlutterEnvironmentConfig {
       return variables[key];
     } else {
       print(
-        'FlutterEnvironmentConfig Value for Key($key) not found\n'
+        'FlutterEnvironmentConfig: Value for Key($key) not found\n'
         'Ensure you have it in .env file',
       );
     }

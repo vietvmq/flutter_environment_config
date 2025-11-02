@@ -20,22 +20,98 @@ class FlutterEnvironmentConfig {
   static const MethodChannel _channel =
       MethodChannel('flutter_environment_config');
 
+  /// Check if the current platform supports environment variable loading
+  static bool get isPlatformSupported {
+    if (kIsWeb) {
+      return true; // Web is supported with webVariables parameter
+    }
+    try {
+      return defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.android;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Get platform name for debugging
+  static String get platformName {
+    if (kIsWeb) return 'Web';
+
+    try {
+      switch (defaultTargetPlatform) {
+        case TargetPlatform.iOS:
+          return 'iOS';
+        case TargetPlatform.android:
+          return 'Android';
+        case TargetPlatform.macOS:
+          return 'macOS';
+        case TargetPlatform.windows:
+          return 'Windows';
+        case TargetPlatform.linux:
+          return 'Linux';
+        case TargetPlatform.fuchsia:
+          return 'Fuchsia';
+        default:
+          return 'Unknown';
+      }
+    } catch (e) {
+      return 'Unknown';
+    }
+  }
+
   /// Variables need to be loaded on app startup, recommend to do it `main.dart`
   static loadEnvVariables({
     Map<String, dynamic>? webVariables,
   }) async {
+    if (kDebugMode) {
+      print(
+        'FlutterEnvironmentConfig: Target platform: $platformName',
+      );
+    }
+
+    // Check if platform is supported
+    if (!isPlatformSupported) {
+      if (kDebugMode) {
+        print(
+          'FlutterEnvironmentConfig: Platform $platformName is not supported. '
+          'Supported platforms: iOS, Android, Web',
+        );
+      }
+      _instance._variables = {};
+      return;
+    }
+
     Map<String, dynamic>? loadedVariables;
+
     if (kIsWeb) {
       // Web platform - use provided variables
+      if (kDebugMode) {
+        print('FlutterEnvironmentConfig: Loading variables for Web platform');
+      }
       loadedVariables = webVariables;
+
+      if (webVariables == null) {
+        if (kDebugMode) {
+          print(
+            'FlutterEnvironmentConfig: No webVariables provided for Web platform. '
+            'Pass your environment variables to loadEnvVariables(webVariables: {...})',
+          );
+        }
+      }
     } else {
       // Native platforms (iOS/Android) - use method channel
+      if (kDebugMode) {
+        print(
+          'FlutterEnvironmentConfig: Loading variables for $platformName platform',
+        );
+      }
+
       try {
         loadedVariables = await _channel.invokeMapMethod('loadEnvVariables');
       } catch (e) {
         if (kDebugMode) {
           print(
-            'FlutterEnvironmentConfig: Failed to load environment variables: $e',
+            'FlutterEnvironmentConfig: Failed to load environment variables on $platformName: $e',
           );
         }
         loadedVariables = {};
@@ -43,25 +119,48 @@ class FlutterEnvironmentConfig {
     }
 
     _instance._variables = loadedVariables ?? {};
+
+    if (kDebugMode) {
+      print(
+        'FlutterEnvironmentConfig: Successfully loaded ${_instance._variables.length} variables',
+      );
+    }
   }
 
   /// Returns a specific variable value give a [key]
   static dynamic get(String key) {
+    // Check if platform is supported
+    if (!isPlatformSupported) {
+      if (kDebugMode) {
+        print(
+          'FlutterEnvironmentConfig: Cannot get variable "$key" - '
+          'Platform $platformName is not supported',
+        );
+      }
+      return null;
+    }
+
     var variables = _instance._variables;
 
     if (variables.isEmpty) {
-      print(
-        'FlutterEnvironmentConfig: Variables are Empty\n'
-        'Ensure you have a .env file and you\n'
-        'have loaded the variables',
-      );
+      if (kDebugMode) {
+        print(
+          'FlutterEnvironmentConfig: Variables are empty for platform $platformName\n'
+          'Ensure you have called loadEnvVariables() and have a .env file',
+        );
+      }
+      return null;
     } else if (variables.containsKey(key)) {
       return variables[key];
     } else {
-      print(
-        'FlutterEnvironmentConfig: Value for Key($key) not found\n'
-        'Ensure you have it in .env file',
-      );
+      if (kDebugMode) {
+        print(
+          'FlutterEnvironmentConfig: Value for Key($key) not found on $platformName\n'
+          'Available keys: ${variables.keys.join(", ")}\n'
+          'Ensure you have "$key" in your .env file',
+        );
+      }
+      return null;
     }
   }
 

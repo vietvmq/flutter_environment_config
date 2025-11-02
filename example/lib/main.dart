@@ -129,7 +129,7 @@ class MyApp extends StatelessWidget {
                             const TextSpan(text: 'Use\n'),
                             TextSpan(
                               text:
-                                  'FlutterEnvironmentConfigGeneration.property',
+                                  'FlutterEnvironmentConfigGeneration.propertyName',
                               style: TextStyle(
                                 fontFamily: 'monospace',
                                 fontWeight: FontWeight.bold,

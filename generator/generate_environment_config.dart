@@ -322,10 +322,11 @@ String _getOutputDirFromPubspec(Map pubspec) {
   return 'lib';
 }
 
-/// Scan for environment files in the specified directory
+/// Scan for environment files in the specified directory (recursive)
 Future<List<String>> scanEnvFiles(Directory directory) async {
   final envFiles = <String>[];
   
+  // First scan root directory
   await for (final entity in directory.list()) {
     if (entity is File) {
       final name = entity.path.split('/').last;
@@ -337,8 +338,58 @@ Future<List<String>> scanEnvFiles(Directory directory) async {
     }
   }
   
+  // If no files found in root, scan subdirectories
+  if (envFiles.isEmpty) {
+    await for (final entity in directory.list()) {
+      if (entity is Directory) {
+        final dirName = entity.path.split('/').last;
+        // Skip common directories that shouldn't contain env files
+        if (!_shouldSkipDirectory(dirName)) {
+          final subDirFiles = await _scanDirectoryForEnvFiles(entity);
+          envFiles.addAll(subDirFiles);
+        }
+      }
+    }
+  }
+  
   envFiles.sort(); // Ensure consistent ordering
   return envFiles;
+}
+
+/// Scan a specific directory for env files (non-recursive to avoid going too deep)
+Future<List<String>> _scanDirectoryForEnvFiles(Directory directory) async {
+  final envFiles = <String>[];
+  
+  try {
+    await for (final entity in directory.list()) {
+      if (entity is File) {
+        final name = entity.path.split('/').last;
+        // Look for .env, .env.*, but skip .env.example files
+        if (name == '.env' || 
+            (name.startsWith('.env.') && !name.endsWith('.example'))) {
+          envFiles.add(entity.path);
+        }
+      }
+    }
+  } catch (e) {
+    // Ignore permission errors or other issues
+  }
+  
+  return envFiles;
+}
+
+/// Check if directory should be skipped during env file scanning
+bool _shouldSkipDirectory(String dirName) {
+  final skipDirs = {
+    'node_modules', '.git', '.dart_tool', 'build', '.vscode', '.idea',
+    'ios', 'android', 'web', 'linux', 'macos', 'windows', // Flutter platform dirs
+    'lib', 'test', 'integration_test', // Dart/Flutter source dirs (usually don't contain env)
+    '.pub-cache', '.flutter-plugins-dependencies',
+    'Pods', 'Runner.xcworkspace', 'Runner.xcodeproj', // iOS specific
+    'gradle', '.gradle', 'app', 'src', // Android specific
+  };
+  
+  return skipDirs.contains(dirName) || dirName.startsWith('.');
 }
 
 // Color helper functions for terminal output

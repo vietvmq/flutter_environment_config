@@ -51,7 +51,13 @@ void main() async {
 }
 
 Future<String?> _findGenerator() async {
-  // Get dependency info
+  // First try to find local path dependency
+  final localPath = await _findLocalPathDependency();
+  if (localPath != null) {
+    return localPath;
+  }
+  
+  // Get dependency info from pub deps
   final result = await Process.run('flutter', ['pub', 'deps', '--json']);
   if (result.exitCode != 0) return null;
   
@@ -111,6 +117,51 @@ Future<String?> _findInGitCache() async {
     }
   } catch (e) {
     // Ignore
+  }
+  
+  return null;
+}
+
+/// Find flutter_environment_config in local packages using path dependencies
+Future<String?> _findLocalPathDependency() async {
+  try {
+    // Search for pubspec.yaml files in packages directory
+    final packagesDir = Directory('packages');
+    if (!await packagesDir.exists()) return null;
+    
+    await for (final entity in packagesDir.list()) {
+      if (entity is Directory) {
+        final pubspecFile = File('${entity.path}/pubspec.yaml');
+        if (await pubspecFile.exists()) {
+          try {
+            final content = await pubspecFile.readAsString();
+            if (content.contains('flutter_environment_config:') && 
+                content.contains('path:')) {
+              // Found a package with path dependency to flutter_environment_config
+              // Extract the path
+              final lines = content.split('\n');
+              for (int i = 0; i < lines.length; i++) {
+                if (lines[i].trim() == 'flutter_environment_config:') {
+                  // Look for path in next few lines
+                  for (int j = i + 1; j < lines.length && j < i + 5; j++) {
+                    final line = lines[j].trim();
+                    if (line.startsWith('path:')) {
+                      final path = line.substring(5).trim();
+                      return '$path/generator/generate_environment_config.dart';
+                    }
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            // Skip invalid files
+            continue;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // Skip if packages directory doesn't exist
   }
   
   return null;

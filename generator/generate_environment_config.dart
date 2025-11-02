@@ -281,6 +281,12 @@ Future<ProjectConfig> detectProjectConfig() async {
       );
     }
     
+    // If root project doesn't have flutter_environment_config, search in packages
+    final configFromPackages = await _findConfigInPackages(currentDir);
+    if (configFromPackages != null) {
+      return configFromPackages;
+    }
+    
     // Check if we're running from within the library itself
     final libDir = Directory('$currentDir/lib');
     if (await libDir.exists()) {
@@ -320,6 +326,49 @@ String _getOutputDirFromPubspec(Map pubspec) {
   // Default to lib directory
   print('📁 Using default output directory: lib');
   return 'lib';
+}
+
+/// Find flutter_environment_config configuration from packages subdirectories
+Future<ProjectConfig?> _findConfigInPackages(String projectRoot) async {
+  final packagesDir = Directory('$projectRoot/packages');
+  if (!await packagesDir.exists()) return null;
+  
+  try {
+    await for (final entity in packagesDir.list()) {
+      if (entity is Directory) {
+        final pubspecFile = File('${entity.path}/pubspec.yaml');
+        if (await pubspecFile.exists()) {
+          try {
+            final pubspecContent = await pubspecFile.readAsString();
+            final pubspec = loadYaml(pubspecContent) as Map;
+            
+            final dependencies = pubspec['dependencies'] as Map?;
+            final devDependencies = pubspec['dev_dependencies'] as Map?;
+            
+            final usesThisLibrary = dependencies?.containsKey('flutter_environment_config') == true ||
+                                   devDependencies?.containsKey('flutter_environment_config') == true;
+            
+            if (usesThisLibrary) {
+              // Found flutter_environment_config in this package
+              final outputDir = _getOutputDirFromPubspec(pubspec);
+              return ProjectConfig(
+                workingDir: projectRoot,
+                outputPath: '$projectRoot/$outputDir/flutter_environment_config.g.dart',
+                isConsumerProject: true,
+              );
+            }
+          } catch (e) {
+            // Skip invalid pubspec files
+            continue;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // Skip if there are permission errors
+  }
+  
+  return null;
 }
 
 /// Scan for environment files in the specified directory (recursive)

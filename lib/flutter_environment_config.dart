@@ -1,4 +1,6 @@
-import 'package:flutter/cupertino.dart';
+library flutter_environment_config;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// Flutter environment config writes environment variables to `BuildConfig` class for android
@@ -11,14 +13,33 @@ class FlutterEnvironmentConfig {
   FlutterEnvironmentConfig._internal();
 
   // Instance of FlutterEnvironmentConfig
-  static final FlutterEnvironmentConfig _instance = FlutterEnvironmentConfig._internal();
+  static final FlutterEnvironmentConfig _instance =
+      FlutterEnvironmentConfig._internal();
 
-  static const MethodChannel _channel = MethodChannel('flutter_environment_config');
+  static const MethodChannel _channel =
+      MethodChannel('flutter_environment_config');
 
   /// Variables need to be loaded on app startup, recommend to do it `main.dart`
-  static loadEnvVariables() async {
-    final Map<String, dynamic>? loadedVariables =
-        await _channel.invokeMapMethod('loadEnvVariables');
+  static loadEnvVariables({
+    Map<String, dynamic>? webVariables,
+  }) async {
+    Map<String, dynamic>? loadedVariables;
+
+    if (kIsWeb) {
+      // Web platform - use provided variables
+      loadedVariables = webVariables;
+    } else {
+      // Native platforms (iOS/Android) - use method channel
+      try {
+        loadedVariables = await _channel.invokeMapMethod('loadEnvVariables');
+      } catch (e) {
+        if (kDebugMode) {
+          print('Failed to load environment variables: $e');
+        }
+        loadedVariables = {};
+      }
+    }
+
     _instance._variables = loadedVariables ?? {};
   }
 

@@ -4,7 +4,7 @@ version: 1.0.0
 homepage: https://github.com/vietvmq/flutter_environment_config
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.10.0"
 
 dependencies:
@@ -13,9 +13,9 @@ dependencies:
   plugin_platform_interface: ^2.0.2
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   flutter_lints: ^2.0.0
+  test: ^1.21.0
+  yaml: ^3.1.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -70,3 +70,10 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
+
+# Add executable for generator
+executables:
+  generate: generate
+
+flutter_environment_config:
+  output_dir: lib/src/generated
